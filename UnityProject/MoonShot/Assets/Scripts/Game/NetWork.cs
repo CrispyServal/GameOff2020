@@ -4,6 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using com.unity.mgobe;
 
+
+[Serializable]
+public struct SendObject
+{
+    public string method;
+    public string value;
+}
+
+[Serializable]
+public struct SyncObject
+{
+    public int hitCount;
+}
+
 public class NetWork : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -158,7 +172,14 @@ public class NetWork : MonoBehaviour
             {
                 foreach (var item in actionList)
                 {
-                    item?.Invoke();
+                    try
+                    {
+                        item?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
                 }
                 actionList.Clear();
             }
@@ -278,14 +299,69 @@ public class NetWork : MonoBehaviour
 
     #endregion
 
+    #region frame
     void OnFrame(Frame frame)
     {
-        Debug.Log(frame);
+        if (frame.Items != null)
+        {
+            foreach (FrameItem item in frame.Items)
+            {
+                Debug.Log(item);
+                if (item.PlayerId != Player.Id)
+                {
+                    SendObject syncObject = JsonUtility.FromJson<SendObject>(item.Data);
+                    switch (syncObject.method)
+                    {
+                        case "CommonResource":
+                            Game.SetCommonResource(int.Parse(syncObject.value));
+                            break;
+                        case "HitPlayer":
+                            Game.OnHitPlayer(syncObject.value);
+                            break;
+                        case "SyncUp":
+                            Game.SyncForPlayer(item.PlayerId, JsonUtility.FromJson<SyncObject>(syncObject.value));
+                            break;
+                    }
+                }
+            }
+        }
     }
+
+    public void SendFrame(SendObject frameData)
+    {
+        var param = new SendFramePara
+        {
+            Data = JsonUtility.ToJson(frameData),
+        };
+        Debug.Log(param.Data);
+        Global.Room.SendFrame(param, (e) => {
+            // TODO
+            Debug.Log("send frame callback");
+            Debug.Log(e);
+        });
+    }
+    #endregion
 
     void StartGame()
     {
         Debug.Log("start game");
         Game.StartGame();
+        Global.Room.StartFrameSync((e) =>
+        {
+            Debug.Log("start frame sync");
+            Debug.Log(e);
+            /*
+            var param = new RequestFramePara
+            {
+                BeginFrameId = 0,
+                EndFrameId = 99999,
+            };
+            Global.Room.RequestFrame(param, (e2) => {
+                Debug.Log(e2);
+            });
+            */
+        });
+
+
     }
 }
