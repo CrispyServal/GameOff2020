@@ -39,6 +39,11 @@ public class Game : MonoBehaviour
         GamePanel.RefreshPlayerList(Global.Room.RoomInfo);
     }
 
+    public void OnSomeOneJoin()
+    {
+        GamePanel.RefreshPlayerList(Global.Room.RoomInfo);
+    }
+
     public void AddCommonResource(bool needSyncToOther = false)
     {
         // TDOO
@@ -67,8 +72,8 @@ public class Game : MonoBehaviour
                 player.OnHitByOther();
             }
         }
-        if (targetId == Player.Id)
-            SyncUp();
+        //if (targetId == Player.Id)
+            //SyncUp();
     }
 
     private int CommonResouceCount = 0;

@@ -307,7 +307,7 @@ public class NetWork : MonoBehaviour
             foreach (FrameItem item in frame.Items)
             {
                 Debug.Log(item);
-                if (item.PlayerId != Player.Id)
+                //if (item.PlayerId != Player.Id)
                 {
                     SendObject syncObject = JsonUtility.FromJson<SendObject>(item.Data);
                     switch (syncObject.method)
@@ -318,8 +318,11 @@ public class NetWork : MonoBehaviour
                         case "HitPlayer":
                             Game.OnHitPlayer(syncObject.value);
                             break;
-                        case "SyncUp":
-                            Game.SyncForPlayer(item.PlayerId, JsonUtility.FromJson<SyncObject>(syncObject.value));
+                        //case "SyncUp":
+                        //    Game.SyncForPlayer(item.PlayerId, JsonUtility.FromJson<SyncObject>(syncObject.value));
+                        //    break;
+                        case "SomeOneJoin":
+                            Game.OnSomeOneJoin();
                             break;
                     }
                 }
@@ -362,6 +365,11 @@ public class NetWork : MonoBehaviour
             */
         });
 
+        SendFrame(new SendObject
+        {
+            method = "SomeOneJoin",
+            value = "",
+        });
 
     }
 }
