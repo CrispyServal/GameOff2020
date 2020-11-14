@@ -1,3 +1,5 @@
 OutAssets/
 build/
 mgobexs.zip
+*.clip
+*.aseprite
