@@ -12,15 +12,18 @@ public class Game : MonoBehaviour
     public NetWork NetWork;
     public GamePanel GamePanel;
     public GameObject LoginPanel;
+    public TableConfig tableConfig = TableConfig.Instance;
     void Start()
     {
         StartCoroutine("CSyncUp");
+        // debug
+        Debug.Log((tableConfig.GetTable(typeof(EnvTable)).GetTableItem(0) as EnvTableItem).name);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        //Debug.Log("game update");
     }
 
     bool isInGame = false;

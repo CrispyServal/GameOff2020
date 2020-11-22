@@ -300,8 +300,15 @@ public class NetWork : MonoBehaviour
     #endregion
 
     #region frame
+    float lastFrame = 0.0f;
     void OnFrame(Frame frame)
     {
+        var now = Time.realtimeSinceStartup;
+        if (lastFrame > 0.0f)
+        {
+            Debug.Log(now - lastFrame);
+        }
+        lastFrame = now;
         if (frame.Items != null)
         {
             foreach (FrameItem item in frame.Items)
