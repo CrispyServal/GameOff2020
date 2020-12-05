@@ -2,20 +2,17 @@ require("scene/scene")
 
 local M = Scene:extend()
 
-local EUiState = {
-    SelectCharacter = 1,
-    SelectAiCharacter = 2,
-    WaitForEnter = 3,
-}
-
 function M:init()
-    self.ui_state = EUiState.SelectCharacter
+    self:reset()
+end
 
+function M:reset()
     self.state = {
         "上帝赌马单机lua版",
         "请选择你喜欢的角色",
     }
     self.selection = self:make_selection()
+    self:refresh()
 end
 
 function M:make_selection()
@@ -34,18 +31,30 @@ end
 
 function M:on_select_character(index)
     print(index)
-    self.ui_state = EUiState.SelectCharacter
-    self.state.selected = {
-        name = CharacterTable[index].name,
-        desc = CharacterTable[index].desc,
+    self.selected_index = index
+    self.state = {
+        title = "您已选择一个英雄，确认开始游戏吗？",
+        selected = {
+            name = CharacterTable[index].name,
+            desc = CharacterTable[index].desc,
+        }
     }
-    self.selection = self:make_ai_selection()
-    self:refresh_selection()
+    self.selection = {
+        {
+            text = "开始",
+            callback = bind(self.start_game, self)
+        },
+        {
+            text = "重新选择",
+            callback = bind(self.reset, self)
+        }
+    }
+    self:refresh()
 end
 
-function M:make_ai_selection()
-    local s = {}
-    return s
+function M:start_game()
+    self:switch_to("game")
+    self:call_scene_func("game", "start", self.selected_index)
 end
 
 function M:update(...)

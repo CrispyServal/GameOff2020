@@ -16,6 +16,17 @@ function M.switch_to(name)
         mp_selection = scene.selection
         update = bind(scene.update, scene)
         mp_reload_selection()
+    else
+        print("no scene named "..tostring(name))
+    end
+end
+
+function M.call_scene_func(scene_name, func_name, ...)
+    local scene = M.scenes[scene_name]
+    if scene then
+        scene[func_name](scene, ...)
+    else
+        print("no scene named "..tostring(scene_name))
     end
 end
 
