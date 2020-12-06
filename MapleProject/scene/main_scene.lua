@@ -16,27 +16,27 @@ function M:reset()
 end
 
 function M:make_selection()
-    require("table/character_table")
+    require("table/hero_table")
     local s = {}
-    for i, table_item in ipairs(CharacterTable) do
+    for i, table_item in ipairs(HeroTable) do
         s[i] = {
             text = table_item.name,
             callback = function()
-                self:on_select_character(i)
+                self:on_select_hero(i)
             end,
         }
     end
     return s
 end
 
-function M:on_select_character(index)
+function M:on_select_hero(index)
     print(index)
     self.selected_index = index
     self.state = {
         title = "您已选择一个英雄，确认开始游戏吗？",
         selected = {
-            name = CharacterTable[index].name,
-            desc = CharacterTable[index].desc,
+            name = HeroTable[index].name,
+            desc = HeroTable[index].desc,
         }
     }
     self.selection = {
