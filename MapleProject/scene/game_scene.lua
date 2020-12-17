@@ -1,9 +1,12 @@
 require("scene/scene")
+require("env")
 
 local M = Scene:extend()
 
 function M:init()
     Scene.init(self)
+
+    self.env = Env()
 end
 
 function M:start(hero_index)
@@ -11,6 +14,7 @@ function M:start(hero_index)
     print(hero_index)
     self.state = {
         ch = hero_index,
+        env = self.env.show_env,
     }
     self:init_heros(hero_index)
     self:refresh()
